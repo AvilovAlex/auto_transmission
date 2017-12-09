@@ -10,8 +10,10 @@ using System.Windows.Forms;
 
 namespace auto_transmission
 {
+   
     public partial class Form1 : Form
     {
+        transmition trans;
         public Form1()
         {
             InitializeComponent();
@@ -19,7 +21,18 @@ namespace auto_transmission
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            arduino.Open();
+            if (arduino.RtsEnable)
+                arduino.Open();
+            int rCnt = 5;
+            gearRange[] gr = new gearRange[6];
+            gr[0] = new gearRange(0, 0);
+            gr[1] = new gearRange(0, 0);
+            gr[2] = new gearRange(0, 0);
+            gr[3] = new gearRange(0, 0);
+            gr[4] = new gearRange(0, 0);
+            gr[5] = new gearRange(0, 0);
+            trans = new transmition(1, rCnt, gr);
+            trans.startEngine();
         }
 
         private delegate void SetTextDeleg(string text);
@@ -52,6 +65,75 @@ namespace auto_transmission
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             arduino.Close();
+        }
+
+        private void start_Button_Click(object sender, EventArgs e)
+        {
+            trans.startEngine();
+        }
+
+        private void stop_Button_Click(object sender, EventArgs e)
+        {
+            trans.stopEngine();
+        }
+    }
+    public class gearRange
+    {
+        public gearRange()
+        {
+        }
+
+        public gearRange(double first, double second)
+        {
+            this.minSpeed = first;
+            this.maxSpeed = second;
+        }
+
+        public double minSpeed { get; set; }
+        public double maxSpeed { get; set; }
+    };
+
+    public class transmition
+    {
+        //Положение переключателя коробки передач
+        int curGear;
+        //0 - Эконом
+        //1 - Стандарт
+        //2 - Спорт
+        int mode;
+
+        //Количество ступеней
+        int gearCount;
+        // минимальная и максимальная скорость для каждой ступени
+        gearRange[] gearsRange;
+        //показания спидометра
+        double speedometer;
+        //показания тахометра
+        double tachometer;
+        //Положение педалей газа и тормоза
+        double gasValue, breakValue;
+
+        public transmition(int _mode, int _gCnt, gearRange[] _gRange)
+        {
+            curGear = 0;
+            mode = _mode;
+            gearCount = _gCnt;
+            gearsRange = _gRange;
+            speedometer = 0;
+            tachometer = 0;
+            gasValue = 0;
+            breakValue = 0;
+        }
+
+        public void startEngine()
+        {
+            if (tachometer == 0)
+                tachometer = 800;
+        }
+        public void stopEngine()
+        {
+            if (tachometer != 0)
+                tachometer = 0;
         }
     }
 }

@@ -2,8 +2,8 @@ C:\Users\sanya\Desktop\auto_transmission\auto_transmission\bin\Debug\auto_transm
 C:\Users\sanya\Desktop\auto_transmission\auto_transmission\bin\Debug\auto_transmission.exe
 C:\Users\sanya\Desktop\auto_transmission\auto_transmission\bin\Debug\auto_transmission.pdb
 C:\Users\sanya\Desktop\auto_transmission\auto_transmission\obj\Debug\auto_transmission.csprojResolveAssemblyReference.cache
-C:\Users\sanya\Desktop\auto_transmission\auto_transmission\obj\Debug\auto_transmission.Form1.resources
 C:\Users\sanya\Desktop\auto_transmission\auto_transmission\obj\Debug\auto_transmission.Properties.Resources.resources
 C:\Users\sanya\Desktop\auto_transmission\auto_transmission\obj\Debug\auto_transmission.csproj.GenerateResource.Cache
 C:\Users\sanya\Desktop\auto_transmission\auto_transmission\obj\Debug\auto_transmission.exe
 C:\Users\sanya\Desktop\auto_transmission\auto_transmission\obj\Debug\auto_transmission.pdb
+C:\Users\sanya\Desktop\auto_transmission\auto_transmission\obj\Debug\auto_transmission.Form1.resources
