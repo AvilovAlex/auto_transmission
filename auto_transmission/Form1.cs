@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace auto_transmission
 {
-   
+
     public partial class Form1 : Form
     {
         transmition trans;
@@ -64,7 +64,7 @@ namespace auto_transmission
             string data = arduino.ReadLine();
             this.BeginInvoke(new SetTextDeleg(si_DataReceived),
                     new object[] { data });
-            
+
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -119,6 +119,14 @@ namespace auto_transmission
         //1 - Стандарт
         //2 - Спорт
         int mode;
+         // 0 - четыре передачи
+         // 2 - без третьей и четвертой передачи
+         // 3 - без четвертой передачи
+         // 4 - задняя
+         // 5 - скорость 0, обороты растут от нажатия педали
+
+        //Передаточные числа от номера передачи
+        Dictionary<int, double> dct = new Dictionary<int, double>();
 
         //Количество ступеней
         int gearCount;
@@ -141,6 +149,13 @@ namespace auto_transmission
             tachometer = 0;
             gasValue = 0;
             breakValue = 0;
+
+            dct.Add(1, 2.9);
+            dct.Add(2, 1.5);
+            dct.Add(3, 1.0);
+            dct.Add(4, 0.7);
+            //задняя
+            dct.Add(5, 2.7);
         }
 
         public void startEngine()
@@ -152,6 +167,74 @@ namespace auto_transmission
         {
             if (tachometer != 0)
                 tachometer = 0;
+        }
+
+        public int get_gear(int ob, int speed)
+        {
+            //тут кейс по режимам коробки (обычная(4 ступени), пониженная(3 ступени), еще какая-то с двумя ступенями и задняя)
+            //далее получаем текущие обороты и скорость и принимаем решение о переключении передачи
+            //примерные значения есть в текстовом файле
+            //заглушка, туду
+
+
+            // Переключение скорости зависит от скорости и от оборотов
+            // Обороты 2400 — 2600 об\мин
+            //
+            // Скорости:
+            //  1 -> 2 - 45-50 км/ч
+            //  2 -> 3 - 50-60 км/ч
+            //  3 -> 4 - 70-75 км/ч
+            switch mode{
+                  case 0:
+                     if (curGear==1){
+                        if ((speeed >=45 && speed <=50) && (ob>=2400 && ob<=2600))
+                           return 2;
+                        else
+                           return 1;
+                     }
+
+                     if (curGear==2){
+                        if ((speeed >=50 && speed <=60) && (ob>=2400 && ob<=2600))
+                           return 3;
+                        else
+                           return 2;
+                     }
+
+                     if (curGear==3){
+                        if ((speeed >=70 && speed <=75) && (ob>=2400 && ob<=2600))
+                           return 4;
+                        else
+                           return 3;
+                     }
+                  case 2:
+                     if (curGear==1){
+                        if ((speeed >=45 && speed <=50) && (ob>=2400 && ob<=2600))
+                           return 2;
+                        else
+                           return 1;
+                     }
+                  case 3:
+                     if (curGear==1){
+                        if ((speeed >=45 && speed <=50) && (ob>=2400 && ob<=2600))
+                           return 2;
+                        else
+                           return 1;
+                     }
+
+                     if (curGear==2){
+                        if ((speeed >=50 && speed <=60) && (ob>=2400 && ob<=2600))
+                           return 3;
+                        else
+                           return 2;
+                     }
+            }
+            return curGear;
+        }
+
+        public double calc_speed(int oboroti)//обороты передаются в качестве аргумента(лучше приводить к инту, чтобы не заебыватсья с отрисовкой)
+        {
+            //(на сколько километров смещают колеса за один оборот) * ((обороты двигателя * 60) / (передаточное число общее * передаточное число ступени * 1000)) км/ч
+            return 1.5 * ((oboroti * 60) / (3.7 * dct[get_gear()] * 1000));
         }
     }
 }
