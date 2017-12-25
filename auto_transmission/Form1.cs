@@ -59,10 +59,7 @@ namespace auto_transmission
                     checkBox1.Checked = (args[1][0] == '1');
                 }
             }
-
-           
-
-
+            trans.increase_tachometr(trackBar1.Value);
         }
 
         private void arduino_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
@@ -115,7 +112,6 @@ namespace auto_transmission
             trans.gasValue = trackBar1.Value;
             brakeBar.Value = (int)trans.gasValue;
 
-            //Zherder TODO
             double d = trans.gasValue;
             tachBar.Value = (int)d;
         }
@@ -158,11 +154,17 @@ namespace auto_transmission
         // минимальная и максимальная скорость для каждой ступени
         gearRange[] gearsRange;
         //показания спидометра
-        double speedometer;
+        public int speedometer;
         //показания тахометра
-        public double tachometer;
+        public int tachometer;
         //Положение педалей газа и тормоза
         public double gasValue, breakValue;
+        
+        public void increase_tachometr(int value){
+            tachometer+=(int)(value*10);
+            curGear=get_gear(tachometer,speedometer);
+            speedometer=calc_speed(tachometer);
+        }
 
         public transmition(int _mode, int _gCnt, gearRange[] _gRange)
         {
@@ -175,7 +177,7 @@ namespace auto_transmission
             gasValue = 0;
             breakValue = 0;
 
-            dct.Add(1, 2.9);
+            dct.Add(0, 2.9);
             dct.Add(2, 1.5);
             dct.Add(3, 1.0);
             dct.Add(4, 0.7);
@@ -213,45 +215,57 @@ namespace auto_transmission
             {
             		case 0:
                      if (curGear==1){
-                        if ((speed >=45 && speed <=50) && (ob>=2400 && ob<=2600))
-                           return 2;
+            			if ((speed >=45 && speed <=50) && (ob>=2400 && ob<=2600)){
+                            tachometer=800;
+                            return 2;
+            			}
                         else
                            return 1;
                      }
 
                      if (curGear==2){
-                        if ((speed >=50 && speed <=60) && (ob>=2400 && ob<=2600))
-                           return 3;
+            			if ((speed >=50 && speed <=60) && (ob>=2400 && ob<=2600)){
+                            tachometer=800;
+                            return 3;
+            			}
                         else
                            return 2;
                      }
 
                      if (curGear==3){
-                        if ((speed >=70 && speed <=75) && (ob>=2400 && ob<=2600))
+            			if ((speed >=70 && speed <=75) && (ob>=2400 && ob<=2600)){
+                           tachometer=800;
                            return 4;
+            			}
                         else
                            return 3;
                      }
                      break;
                   case 2:
                      if (curGear==1){
-                        if ((speed >=45 && speed <=50) && (ob>=2400 && ob<=2600))
-                           return 2;
+                     	if ((speed >=45 && speed <=50) && (ob>=2400 && ob<=2600)){
+                            tachometer=800;
+                            return 2;
+                     	}
                         else
                            return 1;
                      }
                      break;
                   case 3:
                      if (curGear==1){
-                        if ((speed >=45 && speed <=50) && (ob>=2400 && ob<=2600))
+                     	if ((speed >=45 && speed <=50) && (ob>=2400 && ob<=2600)){
+                           tachometer=800;
                            return 2;
+                     	}
                         else
                            return 1;
                      }
 
                      if (curGear==2){
-                        if ((speed >=50 && speed <=60) && (ob>=2400 && ob<=2600))
-                           return 3;
+                     	if ((speed >=50 && speed <=60) && (ob>=2400 && ob<=2600)){
+                        	tachometer=800;
+                            return 3;
+                     	}
                         else
                            return 2;
                      }
@@ -260,10 +274,10 @@ namespace auto_transmission
             return curGear;
         }
 
-        public double calc_speed(int oboroti)//обороты передаются в качестве аргумента(лучше приводить к инту, чтобы не заебыватсья с отрисовкой)
+        public int calc_speed(int oboroti)//обороты передаются в качестве аргумента(лучше приводить к инту, чтобы не заебыватсья с отрисовкой)
         {
             //(на сколько километров смещают колеса за один оборот) * ((обороты двигателя * 60) / (передаточное число общее * передаточное число ступени * 1000)) км/ч
-            return 1.5 * ((oboroti * 60) / (3.7 * dct[curGear] * 1000));
+            return (int)(1.5 * ((oboroti * 60) / (3.7 * dct[curGear] * 1000)));
         }
     }
 }
