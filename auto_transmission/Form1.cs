@@ -53,10 +53,16 @@ namespace auto_transmission
                 args = data.Split(separator, StringSplitOptions.RemoveEmptyEntries);
                 if (args.Length == 2)
                 {
-                    brakeBar.Value = (int)(int.Parse(args[0]) / 10.23);
+                    //trans.gasValue = (int.Parse(args[0]) / 10.23);
+                    trans.gasValue = trackBar1.Value;
+                    brakeBar.Value = (int)trans.gasValue;
                     checkBox1.Checked = (args[1][0] == '1');
                 }
             }
+
+           
+
+
         }
 
         private void arduino_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
@@ -89,10 +95,12 @@ namespace auto_transmission
 
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
-            double log2;
-            double log = trackBar1.Value;
-            log2 = log / 1023;
-            label1.Text = log2.ToString();
+            trans.gasValue = trackBar1.Value;
+            brakeBar.Value = (int)trans.gasValue;
+
+            //Zherder TODO
+            double d = trans.gasValue;
+            tachBar.Value = (int)d;
         }
     }
     public class gearRange
@@ -137,7 +145,7 @@ namespace auto_transmission
         //показания тахометра
         public double tachometer;
         //Положение педалей газа и тормоза
-        double gasValue, breakValue;
+        public double gasValue, breakValue;
 
         public transmition(int _mode, int _gCnt, gearRange[] _gRange)
         {

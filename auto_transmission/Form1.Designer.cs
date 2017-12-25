@@ -89,13 +89,13 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(36, 154);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 13);
+            this.label1.Size = new System.Drawing.Size(78, 13);
             this.label1.TabIndex = 5;
-            this.label1.Text = "Тахометр";
+            this.label1.Text = "Сила нажатия";
             // 
             // tachBar
             // 
-            this.tachBar.Location = new System.Drawing.Point(108, 154);
+            this.tachBar.Location = new System.Drawing.Point(120, 154);
             this.tachBar.Name = "tachBar";
             this.tachBar.Size = new System.Drawing.Size(100, 23);
             this.tachBar.TabIndex = 6;
@@ -111,7 +111,7 @@
             // trackBar1
             // 
             this.trackBar1.Location = new System.Drawing.Point(49, 195);
-            this.trackBar1.Maximum = 1023;
+            this.trackBar1.Maximum = 100;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(104, 45);
             this.trackBar1.TabIndex = 8;
