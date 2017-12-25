@@ -184,49 +184,53 @@ namespace auto_transmission
             //  1 -> 2 - 45-50 км/ч
             //  2 -> 3 - 50-60 км/ч
             //  3 -> 4 - 70-75 км/ч
-            switch mode{
-                  case 0:
+            switch (mode) 
+            {
+            		case 0:
                      if (curGear==1){
-                        if ((speeed >=45 && speed <=50) && (ob>=2400 && ob<=2600))
+                        if ((speed >=45 && speed <=50) && (ob>=2400 && ob<=2600))
                            return 2;
                         else
                            return 1;
                      }
 
                      if (curGear==2){
-                        if ((speeed >=50 && speed <=60) && (ob>=2400 && ob<=2600))
+                        if ((speed >=50 && speed <=60) && (ob>=2400 && ob<=2600))
                            return 3;
                         else
                            return 2;
                      }
 
                      if (curGear==3){
-                        if ((speeed >=70 && speed <=75) && (ob>=2400 && ob<=2600))
+                        if ((speed >=70 && speed <=75) && (ob>=2400 && ob<=2600))
                            return 4;
                         else
                            return 3;
                      }
+                     break;
                   case 2:
                      if (curGear==1){
-                        if ((speeed >=45 && speed <=50) && (ob>=2400 && ob<=2600))
+                        if ((speed >=45 && speed <=50) && (ob>=2400 && ob<=2600))
                            return 2;
                         else
                            return 1;
                      }
+                     break;
                   case 3:
                      if (curGear==1){
-                        if ((speeed >=45 && speed <=50) && (ob>=2400 && ob<=2600))
+                        if ((speed >=45 && speed <=50) && (ob>=2400 && ob<=2600))
                            return 2;
                         else
                            return 1;
                      }
 
                      if (curGear==2){
-                        if ((speeed >=50 && speed <=60) && (ob>=2400 && ob<=2600))
+                        if ((speed >=50 && speed <=60) && (ob>=2400 && ob<=2600))
                            return 3;
                         else
                            return 2;
                      }
+                     break;
             }
             return curGear;
         }
@@ -234,7 +238,7 @@ namespace auto_transmission
         public double calc_speed(int oboroti)//обороты передаются в качестве аргумента(лучше приводить к инту, чтобы не заебыватсья с отрисовкой)
         {
             //(на сколько километров смещают колеса за один оборот) * ((обороты двигателя * 60) / (передаточное число общее * передаточное число ступени * 1000)) км/ч
-            return 1.5 * ((oboroti * 60) / (3.7 * dct[get_gear()] * 1000));
+            return 1.5 * ((oboroti * 60) / (3.7 * dct[curGear] * 1000));
         }
     }
 }
