@@ -14,6 +14,7 @@ namespace auto_transmission
     public partial class Form1 : Form
     {
         transmition trans;
+        Graphics tackGr;
         public Form1()
         {
             InitializeComponent();
@@ -22,7 +23,7 @@ namespace auto_transmission
         private void Form1_Load(object sender, EventArgs e)
         {
             if (arduino.RtsEnable)
-                arduino.Open();
+            { arduino.Open(); }
             int rCnt = 5;
             gearRange[] gr = new gearRange[6];
             gr[0] = new gearRange(0, 0);
@@ -33,6 +34,10 @@ namespace auto_transmission
             gr[5] = new gearRange(0, 0);
             trans = new transmition(1, rCnt, gr);
             trans.startEngine();
+
+
+            tackGr = tachGraph.CreateGraphics();
+            tachGraph.Refresh();
         }
 
         private delegate void SetTextDeleg(string text);
@@ -69,12 +74,25 @@ namespace auto_transmission
 
         private void start_Button_Click(object sender, EventArgs e)
         {
+
+           
+            tackGr.DrawLine(new Pen(Brushes.Red, 3), 
+                new Point(70, 50), 
+                new Point(70 - (int)Math.Cos(trans.tachometer), 50 + (int)Math.Sin(trans.tachometer)));
             trans.startEngine();
         }
 
         private void stop_Button_Click(object sender, EventArgs e)
         {
             trans.stopEngine();
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            double log2;
+            double log = trackBar1.Value;
+            log2 = log / 1023;
+            label1.Text = log2.ToString();
         }
     }
     public class gearRange
@@ -109,7 +127,7 @@ namespace auto_transmission
         //показания спидометра
         double speedometer;
         //показания тахометра
-        double tachometer;
+        public double tachometer;
         //Положение педалей газа и тормоза
         double gasValue, breakValue;
 

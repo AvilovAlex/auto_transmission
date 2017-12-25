@@ -35,7 +35,11 @@
             this.start_Button = new System.Windows.Forms.Button();
             this.stop_Button = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.tachBar = new System.Windows.Forms.ProgressBar();
+            this.tachGraph = new System.Windows.Forms.PictureBox();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            ((System.ComponentModel.ISupportInitialize)(this.tachGraph)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
             // arduino
@@ -89,19 +93,38 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "Тахометр";
             // 
-            // progressBar1
+            // tachBar
             // 
-            this.progressBar1.Location = new System.Drawing.Point(108, 154);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(100, 23);
-            this.progressBar1.TabIndex = 6;
+            this.tachBar.Location = new System.Drawing.Point(108, 154);
+            this.tachBar.Name = "tachBar";
+            this.tachBar.Size = new System.Drawing.Size(100, 23);
+            this.tachBar.TabIndex = 6;
+            // 
+            // tachGraph
+            // 
+            this.tachGraph.Location = new System.Drawing.Point(269, 28);
+            this.tachGraph.Name = "tachGraph";
+            this.tachGraph.Size = new System.Drawing.Size(150, 100);
+            this.tachGraph.TabIndex = 7;
+            this.tachGraph.TabStop = false;
+            // 
+            // trackBar1
+            // 
+            this.trackBar1.Location = new System.Drawing.Point(49, 195);
+            this.trackBar1.Maximum = 1023;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(104, 45);
+            this.trackBar1.TabIndex = 8;
+            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(345, 221);
-            this.Controls.Add(this.progressBar1);
+            this.ClientSize = new System.Drawing.Size(529, 291);
+            this.Controls.Add(this.trackBar1);
+            this.Controls.Add(this.tachGraph);
+            this.Controls.Add(this.tachBar);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.stop_Button);
             this.Controls.Add(this.start_Button);
@@ -111,6 +134,8 @@
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.tachGraph)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -124,7 +149,9 @@
         private System.Windows.Forms.Button start_Button;
         private System.Windows.Forms.Button stop_Button;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.ProgressBar tachBar;
+        private System.Windows.Forms.PictureBox tachGraph;
+        private System.Windows.Forms.TrackBar trackBar1;
     }
 }
 
