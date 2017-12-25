@@ -78,13 +78,30 @@ namespace auto_transmission
             arduino.Close();
         }
 
+        public double DegreeToRadian(double angle)
+        {
+            return Math.PI * angle / 180.0;
+        }
+
         private void start_Button_Click(object sender, EventArgs e)
         {
-
-           
-            tackGr.DrawLine(new Pen(Brushes.Red, 3), 
-                new Point(70, 50), 
-                new Point(70 - (int)Math.Cos(trans.tachometer), 50 + (int)Math.Sin(trans.tachometer)));
+            trans.tachometer = 800;
+            tackGr.DrawString("0", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 6, 55);
+            tackGr.DrawString("1", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 15, 35);
+            tackGr.DrawString("2", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 28, 20);
+            tackGr.DrawString("3", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 47, 10);
+            tackGr.DrawString("4", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 70, 5);
+            tackGr.DrawString("5", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 93, 10);
+            tackGr.DrawString("6", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 110, 20);
+            tackGr.DrawString("7", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 123, 35);
+            tackGr.DrawString("8", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 135, 55);
+            tackGr.DrawString(trans.tachometer.ToString(), new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 60, 80);
+            int r = 60;
+            double x = 75 - Math.Cos(DegreeToRadian(trans.tachometer/54.0 + 16)) * r;
+            double y = 80 - Math.Sin(DegreeToRadian(trans.tachometer/54.0 + 16)) * r;
+            tackGr.DrawLine(new Pen(Brushes.Red, 3),
+                new Point(75, 80),
+                new Point((int)x, (int)y));
             trans.startEngine();
         }
 

@@ -102,6 +102,7 @@
             // 
             // tachGraph
             // 
+            this.tachGraph.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tachGraph.Location = new System.Drawing.Point(269, 28);
             this.tachGraph.Name = "tachGraph";
             this.tachGraph.Size = new System.Drawing.Size(150, 100);
