@@ -33,8 +33,6 @@ namespace auto_transmission
             gr[4] = new gearRange(0, 0);
             gr[5] = new gearRange(0, 0);
             trans = new transmition(1, rCnt, gr);
-            trans.startEngine();
-
 
             tackGr = tachGraph.CreateGraphics();
             tachGraph.Refresh();
@@ -59,7 +57,8 @@ namespace auto_transmission
                     checkBox1.Checked = (args[1][0] == '1');
                 }
             }
-            trans.increase_tachometr(trackBar1.Value);
+            //trans.increase_tachometr(trackBar1.Value);
+            //tachDraw();
         }
 
         private void arduino_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
@@ -80,9 +79,9 @@ namespace auto_transmission
             return Math.PI * angle / 180.0;
         }
 
-        private void start_Button_Click(object sender, EventArgs e)
+        public void tachDraw()
         {
-            trans.tachometer = 800;
+            tackGr.Clear(Color.White);
             tackGr.DrawString("0", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 6, 55);
             tackGr.DrawString("1", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 15, 35);
             tackGr.DrawString("2", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 28, 20);
@@ -94,11 +93,14 @@ namespace auto_transmission
             tackGr.DrawString("8", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 135, 55);
             tackGr.DrawString(trans.tachometer.ToString(), new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 60, 80);
             int r = 60;
-            double x = 75 - Math.Cos(DegreeToRadian(trans.tachometer/54.0 + 16)) * r;
-            double y = 80 - Math.Sin(DegreeToRadian(trans.tachometer/54.0 + 16)) * r;
+            double x = 75 - Math.Cos(DegreeToRadian(trans.tachometer / 54.0 + 16)) * r;
+            double y = 80 - Math.Sin(DegreeToRadian(trans.tachometer / 54.0 + 16)) * r;
             tackGr.DrawLine(new Pen(Brushes.Red, 3),
                 new Point(75, 80),
                 new Point((int)x, (int)y));
+        }
+        private void start_Button_Click(object sender, EventArgs e)
+        {
             trans.startEngine();
         }
 
@@ -110,10 +112,13 @@ namespace auto_transmission
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
             trans.gasValue = trackBar1.Value;
-            brakeBar.Value = (int)trans.gasValue;
+        }
 
-            double d = trans.gasValue;
-            tachBar.Value = (int)d;
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            GasBar.Value = (int)trans.gasValue;
+            trans.increase_tachometr();
+            tachDraw();
         }
     }
     public class gearRange
@@ -148,7 +153,7 @@ namespace auto_transmission
 
         //Передаточные числа от номера передачи
         Dictionary<int, double> dct = new Dictionary<int, double>();
-
+        bool isRun;
         //Количество ступеней
         int gearCount;
         // минимальная и максимальная скорость для каждой ступени
@@ -160,10 +165,23 @@ namespace auto_transmission
         //Положение педалей газа и тормоза
         public double gasValue, breakValue;
         
-        public void increase_tachometr(int value){
-            tachometer+=(int)(value*10);
-            curGear=get_gear(tachometer,speedometer);
-            speedometer=calc_speed(tachometer);
+        public void increase_tachometr(){
+            if (isRun)
+            {
+                if (this.gasValue > 10)
+                    if (tachometer < 7500)
+                        tachometer += (int)(this.gasValue * 2.5);
+                    else
+                    { }
+                else
+                    if (tachometer > 831)
+                    tachometer -= 400;
+                else
+                        if (tachometer != 0)
+                    tachometer = 800;
+            }
+            //curGear = get_gear(tachometer, speedometer);
+            //speedometer = calc_speed(tachometer);
         }
 
         public transmition(int _mode, int _gCnt, gearRange[] _gRange)
@@ -176,7 +194,7 @@ namespace auto_transmission
             tachometer = 0;
             gasValue = 0;
             breakValue = 0;
-
+            isRun = false;
             dct.Add(0, 2.9);
             dct.Add(2, 1.5);
             dct.Add(3, 1.0);
@@ -189,11 +207,13 @@ namespace auto_transmission
         {
             if (tachometer == 0)
                 tachometer = 800;
+            isRun = true;
         }
         public void stopEngine()
         {
             if (tachometer != 0)
                 tachometer = 0;
+            isRun = false;
         }
 
         public int get_gear(int ob, int speed)

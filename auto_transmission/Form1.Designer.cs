@@ -35,9 +35,10 @@
             this.start_Button = new System.Windows.Forms.Button();
             this.stop_Button = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.tachBar = new System.Windows.Forms.ProgressBar();
+            this.GasBar = new System.Windows.Forms.ProgressBar();
             this.tachGraph = new System.Windows.Forms.PictureBox();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.tachGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
@@ -93,12 +94,12 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "Сила нажатия";
             // 
-            // tachBar
+            // GasBar
             // 
-            this.tachBar.Location = new System.Drawing.Point(120, 154);
-            this.tachBar.Name = "tachBar";
-            this.tachBar.Size = new System.Drawing.Size(100, 23);
-            this.tachBar.TabIndex = 6;
+            this.GasBar.Location = new System.Drawing.Point(120, 154);
+            this.GasBar.Name = "GasBar";
+            this.GasBar.Size = new System.Drawing.Size(100, 23);
+            this.GasBar.TabIndex = 6;
             // 
             // tachGraph
             // 
@@ -118,6 +119,12 @@
             this.trackBar1.TabIndex = 8;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 50;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -125,7 +132,7 @@
             this.ClientSize = new System.Drawing.Size(529, 291);
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.tachGraph);
-            this.Controls.Add(this.tachBar);
+            this.Controls.Add(this.GasBar);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.stop_Button);
             this.Controls.Add(this.start_Button);
@@ -150,9 +157,10 @@
         private System.Windows.Forms.Button start_Button;
         private System.Windows.Forms.Button stop_Button;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ProgressBar tachBar;
+        private System.Windows.Forms.ProgressBar GasBar;
         private System.Windows.Forms.PictureBox tachGraph;
         private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 
