@@ -15,6 +15,7 @@ namespace auto_transmission
     {
         transmition trans;
         Graphics tackGr;
+		Graphics speedGr;
         public Form1()
         {
             InitializeComponent();
@@ -36,6 +37,9 @@ namespace auto_transmission
 
             tackGr = tachGraph.CreateGraphics();
             tachGraph.Refresh();
+
+			speedGr = speedGraph.CreateGraphics();
+			speedGraph.Refresh();
         }
 
         private delegate void SetTextDeleg(string text);
@@ -99,7 +103,28 @@ namespace auto_transmission
                 new Point(75, 80),
                 new Point((int)x, (int)y));
         }
-        private void start_Button_Click(object sender, EventArgs e)
+
+		public void speedDraw()
+		{
+			speedGr.Clear(Color.White);
+			speedGr.DrawString("0", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 6, 55);
+			speedGr.DrawString("20", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 15, 35);
+			speedGr.DrawString("40", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 28, 20);
+			speedGr.DrawString("60", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 47, 10);
+			speedGr.DrawString("80", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 70, 5);
+			speedGr.DrawString("100", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 93, 10);
+			speedGr.DrawString("120", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 110, 20);
+			speedGr.DrawString("140", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 123, 35);
+			speedGr.DrawString("160", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 135, 55);
+			speedGr.DrawString(trans.speedometer.ToString(), new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 60, 80);
+			int r = 60;
+			double x = 75 - Math.Cos(DegreeToRadian(trans.speedometer + 16)) * r;
+			double y = 80 - Math.Sin(DegreeToRadian(trans.speedometer + 16)) * r;
+			speedGr.DrawLine(new Pen(Brushes.Red, 3),
+				new Point(75, 80),
+				new Point((int)x, (int)y));
+		}
+		private void start_Button_Click(object sender, EventArgs e)
         {
             trans.startEngine();
         }
@@ -138,8 +163,10 @@ namespace auto_transmission
                default: modeGraph.Text = "P";
                     break;
             }
+			transGraph.Text = trans.curGear.ToString();
             trans.increase_tachometr();
             tachDraw();
+			speedDraw();
         }
 
         private void Park_CheckedChanged(object sender, EventArgs e)
@@ -188,9 +215,6 @@ namespace auto_transmission
     {
         //Положение переключателя коробки передач
         public int curGear;
-        //0 - Эконом
-        //1 - Стандарт
-        //2 - Спорт
         public int mode;
         // 0 - Parking скорость 0, обороты растут от нажатия педали
         // 1 - R задняя 
@@ -228,7 +252,7 @@ namespace auto_transmission
                     tachometer = 800;
             }
             curGear = get_gear(tachometer, speedometer);
-            //speedometer = calc_speed(tachometer);
+            speedometer = calc_speed(tachometer);
         }
 
         public transmition(int _mode, int _gCnt, gearRange[] _gRange)
@@ -243,11 +267,11 @@ namespace auto_transmission
             breakValue = 0;
             isRun = false;
             dct.Add(0, 2.9);
-            dct.Add(2, 1.5);
-            dct.Add(3, 1.0);
-            dct.Add(4, 0.7);
+            dct.Add(1, 1.5);
+            dct.Add(2, 1.0);
+            dct.Add(3, 0.7);
             //задняя
-            dct.Add(5, 2.7);
+            dct.Add(4, 2.7);
         }
 
         public void startEngine()
@@ -265,72 +289,34 @@ namespace auto_transmission
 
         public int get_gear(int ob, int speed)
         {
-            //тут кейс по режимам коробки (обычная(4 ступени), пониженная(3 ступени), еще какая-то с двумя ступенями и задняя)
-            //далее получаем текущие обороты и скорость и принимаем решение о переключении передачи
-            //примерные значения есть в текстовом файле
-            //заглушка, туду
+			//тут кейс по режимам коробки (обычная(4 ступени), пониженная(3 ступени), еще какая-то с двумя ступенями и задняя)
+			//далее получаем текущие обороты и скорость и принимаем решение о переключении передачи
+			//примерные значения есть в текстовом файле
+			//заглушка, туду
 
 
-            // Переключение скорости зависит от скорости и от оборотов
-            // Обороты 2400 — 2600 об\мин
-            //
-            // Скорости:
-            //  1 -> 2 - 45-50 км/ч
-            //  2 -> 3 - 50-60 км/ч
-            //  3 -> 4 - 70-75 км/ч
-            switch (mode) 
+			// Переключение скорости зависит от скорости и от оборотов
+			// Обороты 2400 — 2600 об\мин
+			//
+			// Скорости:
+			//  1 -> 2 - 45-50 км/ч
+			//  2 -> 3 - 50-60 км/ч
+			//  3 -> 4 - 70-75 км/ч
+
+			// 0 - Parking скорость 0, обороты растут от нажатия педали
+			// 1 - R задняя 
+			// 2 - L1 без третьей и четвертой передачи
+			// 3 - L2 без четвертой передачи
+			// 4 - Drive четыре передачи
+			switch (mode) 
             {
-            		case 0:
-                    if (curGear == 0)
-                    {
-
-                    }
-                     if (curGear==1){
-            			if ((speed >=45 && speed <=50) && (ob>=2400 && ob<=2600)){
-                            tachometer=800;
-                            return 2;
-            			}
-                        else
-                           return 1;
-                     }
-
-                     if (curGear==2){
-            			if ((speed >=50 && speed <=60) && (ob>=2400 && ob<=2600)){
-                            tachometer=800;
-                            return 3;
-            			}
-                        else
-                           return 2;
-                     }
-
-                     if (curGear==3){
-            			if ((speed >=70 && speed <=75) && (ob>=2400 && ob<=2600)){
-                           tachometer=800;
-                           return 4;
-            			}
-                        else
-                           return 3;
-                     }
-                     break;
-                  case 2:
-                     if (curGear==1){
-                     	if ((speed >=45 && speed <=50) && (ob>=2400 && ob<=2600)){
-                            tachometer=800;
-                            return 2;
-                     	}
-                        else
-                           return 1;
-                     }
-                     break;
-                  case 3:
-                     if (curGear==1){
-                     	if ((speed >=45 && speed <=50) && (ob>=2400 && ob<=2600)){
-                           tachometer=800;
-                           return 2;
-                     	}
-                        else
-                           return 1;
-                     }
+            		case 0: curGear = 0;
+							break;
+                  case 4: //D
+                     if (breakValue < 20)
+						curGear = 1;						
+                     	else
+						curGear = 0;
 
                      if (curGear==2){
                      	if ((speed >=50 && speed <=60) && (ob>=2400 && ob<=2600)){
