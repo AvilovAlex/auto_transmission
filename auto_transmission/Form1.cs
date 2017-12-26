@@ -116,7 +116,7 @@ namespace auto_transmission
 			speedGr.DrawString("120", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 110, 20);
 			speedGr.DrawString("140", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 123, 35);
 			speedGr.DrawString("160", new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 135, 55);
-			speedGr.DrawString(trans.speedometer.ToString(), new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 60, 80);
+			speedGr.DrawString(((int)trans.speedometer).ToString(), new Font("Arial", 10, FontStyle.Regular), Brushes.Black, 60, 80);
 			int r = 60;
 			double x = 75 - Math.Cos(DegreeToRadian(trans.speedometer + 16)) * r;
 			double y = 80 - Math.Sin(DegreeToRadian(trans.speedometer + 16)) * r;
@@ -165,6 +165,7 @@ namespace auto_transmission
             }
 			transGraph.Text = trans.curGear.ToString();
             trans.increase_tachometr();
+            trans.decrease_tachometr();
             tachDraw();
 			speedDraw();
         }
@@ -230,7 +231,7 @@ namespace auto_transmission
         // минимальная и максимальная скорость для каждой ступени
         gearRange[] gearsRange;
         //показания спидометра
-        public int speedometer;
+        public double speedometer;
         //показания тахометра
         public int tachometer;
         //Положение педалей газа и тормоза
@@ -243,13 +244,27 @@ namespace auto_transmission
                     if (tachometer < 7500)
                         tachometer += (int)(this.gasValue * 2.5);
                     else
-                    { }
+                    {
+                        
+                    }
                 else
                     if (tachometer > 831)
                     tachometer -= 400;
                 else
                         if (tachometer != 0)
                     tachometer = 800;
+
+                curGear = get_gear(tachometer, speedometer);
+                speedometer = calc_speed(tachometer);
+            }
+        }
+
+        public void decrease_tachometr()
+        {
+            if (isRun)
+            {
+                if ((this.breakValue > 10)&&(speedometer > 0))
+                        speedometer -= (int)(this.breakValue / 20);
 
                 curGear = get_gear(tachometer, speedometer);
                 speedometer = calc_speed(tachometer);
@@ -289,7 +304,7 @@ namespace auto_transmission
             isRun = false;
         }
 
-        public int get_gear(int ob, int speed)
+        public int get_gear(int ob, double speed)
         {
 			//тут кейс по режимам коробки (обычная(4 ступени), пониженная(3 ступени), еще какая-то с двумя ступенями и задняя)
 			//далее получаем текущие обороты и скорость и принимаем решение о переключении передачи
@@ -318,8 +333,6 @@ namespace auto_transmission
                     if (speedometer < 14)
                      if (breakValue < 20)
 						curGear = 1;						
-                     	else
-						curGear = 0;
 
                     if (curGear == 1)
                     {
@@ -346,15 +359,57 @@ namespace auto_transmission
                         }
                     }
                         break;
+                case 1:
+                    break;
+                case 2: //L1
+                    if (speedometer < 14)
+                        if (breakValue < 20)
+                            curGear = 1;
 
+                    if (curGear == 1)
+                    {
+                        if ((speed >= 20) && (ob >= 2400))
+                        {
+                            curGear = 2;
+                            tachometer -= 2000;
+                        }
+                    }
+                    break;
+                case 3: //L2
+                    if (speedometer < 14)
+                        if (breakValue < 20)
+                            curGear = 1;
+
+                    if (curGear == 1)
+                    {
+                        if ((speed >= 20) && (ob >= 2400))
+                        {
+                            curGear = 2;
+                            tachometer -= 2000;
+                        }
+                    }
+                    if (curGear == 2)
+                    {
+                        if ((speed >= 40) && (ob >= 2400))
+                        {
+                            curGear = 3;
+                            tachometer -= 1500;
+                        }
+                    }
+
+                    break;
             }
             return curGear;
         }
 
-        public int calc_speed(int oboroti)//обороты передаются в качестве аргумента
+        public double calc_speed(int oboroti)//обороты передаются в качестве аргумента
         {
             //(на сколько километров смещают колеса за один оборот) * ((обороты двигателя * 60) / (передаточное число общее * передаточное число ступени * 1000)) км/ч
             if (mode == 0) return 0;
+            if ((gasValue < 10)&&(speedometer > 4))
+                return speedometer - 0.2;
+            if ((gasValue < 10) && (breakValue > 10) && (speedometer < 10))
+                return 0;
             return (int)(1.5 * ((oboroti * 60) / (3.7 * dct[curGear] * 1000)));
         }
     }
