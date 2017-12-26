@@ -32,7 +32,7 @@ namespace auto_transmission
             gr[3] = new gearRange(0, 0);
             gr[4] = new gearRange(0, 0);
             gr[5] = new gearRange(0, 0);
-            trans = new transmition(1, rCnt, gr);
+            trans = new transmition(5, rCnt, gr);
 
             tackGr = tachGraph.CreateGraphics();
             tachGraph.Refresh();
@@ -52,8 +52,8 @@ namespace auto_transmission
                 if (args.Length == 2)
                 {
                     //trans.gasValue = (int.Parse(args[0]) / 10.23);
-                    trans.gasValue = trackBar1.Value;
-                    brakeBar.Value = (int)trans.gasValue;
+                    trans.gasValue = GasSim.Value;
+                    ArduinoGas.Value = (int)trans.gasValue;
                     checkBox1.Checked = (args[1][0] == '1');
                 }
             }
@@ -111,14 +111,60 @@ namespace auto_transmission
 
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
-            trans.gasValue = trackBar1.Value;
+            trans.gasValue = GasSim.Value;
+        }
+
+        private void BreakSim_Scroll(object sender, EventArgs e)
+        {
+            trans.breakValue = BreakSim.Value;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             GasBar.Value = (int)trans.gasValue;
+            BreakBar.Value = (int)trans.breakValue;
+            switch (trans.mode)
+            {
+               case 0: modeGraph.Text = "P";
+                       break;
+               case 1: modeGraph.Text = "R";
+                       break;
+               case 2: modeGraph.Text = "L1";
+                       break;
+               case 3: modeGraph.Text = "L2";
+                   break;
+               case 4: modeGraph.Text = "D";
+                   break;
+               default: modeGraph.Text = "P";
+                    break;
+            }
             trans.increase_tachometr();
             tachDraw();
+        }
+
+        private void Park_CheckedChanged(object sender, EventArgs e)
+        {
+            trans.mode = 0;
+        }
+
+        private void Reverse_CheckedChanged(object sender, EventArgs e)
+        {
+            trans.mode = 1;
+        }
+
+        private void Drive_CheckedChanged(object sender, EventArgs e)
+        {
+            trans.mode = 4;
+        }
+
+        private void Le2_CheckedChanged(object sender, EventArgs e)
+        {
+            trans.mode = 3;
+        }
+
+        private void Le1_CheckedChanged(object sender, EventArgs e)
+        {
+            trans.mode = 2;
         }
     }
     public class gearRange
@@ -137,19 +183,20 @@ namespace auto_transmission
         public double maxSpeed { get; set; }
     };
 
+    //Класс автоматической коробки передач
     public class transmition
     {
         //Положение переключателя коробки передач
-        int curGear;
+        public int curGear;
         //0 - Эконом
         //1 - Стандарт
         //2 - Спорт
-        int mode;
-         // 0 - четыре передачи
-         // 2 - без третьей и четвертой передачи
-         // 3 - без четвертой передачи
-         // 4 - задняя
-         // 5 - скорость 0, обороты растут от нажатия педали
+        public int mode;
+        // 0 - Parking скорость 0, обороты растут от нажатия педали
+        // 1 - R задняя 
+        // 2 - L1 без третьей и четвертой передачи
+        // 3 - L2 без четвертой передачи
+        // 4 - Drive четыре передачи
 
         //Передаточные числа от номера передачи
         Dictionary<int, double> dct = new Dictionary<int, double>();
@@ -180,7 +227,7 @@ namespace auto_transmission
                         if (tachometer != 0)
                     tachometer = 800;
             }
-            //curGear = get_gear(tachometer, speedometer);
+            curGear = get_gear(tachometer, speedometer);
             //speedometer = calc_speed(tachometer);
         }
 
@@ -234,6 +281,10 @@ namespace auto_transmission
             switch (mode) 
             {
             		case 0:
+                    if (curGear == 0)
+                    {
+
+                    }
                      if (curGear==1){
             			if ((speed >=45 && speed <=50) && (ob>=2400 && ob<=2600)){
                             tachometer=800;
@@ -294,7 +345,7 @@ namespace auto_transmission
             return curGear;
         }
 
-        public int calc_speed(int oboroti)//обороты передаются в качестве аргумента(лучше приводить к инту, чтобы не заебыватсья с отрисовкой)
+        public int calc_speed(int oboroti)//обороты передаются в качестве аргумента
         {
             //(на сколько километров смещают колеса за один оборот) * ((обороты двигателя * 60) / (передаточное число общее * передаточное число ступени * 1000)) км/ч
             return (int)(1.5 * ((oboroti * 60) / (3.7 * dct[curGear] * 1000)));
