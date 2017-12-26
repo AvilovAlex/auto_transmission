@@ -16,3 +16,12 @@ D:\_Desktop\auto_transmission-master\auto_transmission\obj\Debug\auto_transmissi
 D:\_Desktop\auto_transmission-master\auto_transmission\obj\Debug\auto_transmission.csproj.GenerateResource.Cache
 D:\_Desktop\auto_transmission-master\auto_transmission\obj\Debug\auto_transmission.exe
 D:\_Desktop\auto_transmission-master\auto_transmission\obj\Debug\auto_transmission.pdb
+C:\Users\Al\Documents\GitHub\auto_transmission\auto_transmission\bin\Debug\auto_transmission.exe.config
+C:\Users\Al\Documents\GitHub\auto_transmission\auto_transmission\obj\Debug\auto_transmission.exe
+C:\Users\Al\Documents\GitHub\auto_transmission\auto_transmission\obj\Debug\auto_transmission.pdb
+C:\Users\Al\Documents\GitHub\auto_transmission\auto_transmission\bin\Debug\auto_transmission.exe
+C:\Users\Al\Documents\GitHub\auto_transmission\auto_transmission\bin\Debug\auto_transmission.pdb
+C:\Users\Al\Documents\GitHub\auto_transmission\auto_transmission\obj\Debug\auto_transmission.csprojResolveAssemblyReference.cache
+C:\Users\Al\Documents\GitHub\auto_transmission\auto_transmission\obj\Debug\auto_transmission.Form1.resources
+C:\Users\Al\Documents\GitHub\auto_transmission\auto_transmission\obj\Debug\auto_transmission.Properties.Resources.resources
+C:\Users\Al\Documents\GitHub\auto_transmission\auto_transmission\obj\Debug\auto_transmission.csproj.GenerateResource.Cache

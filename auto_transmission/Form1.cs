@@ -33,7 +33,7 @@ namespace auto_transmission
             gr[3] = new gearRange(0, 0);
             gr[4] = new gearRange(0, 0);
             gr[5] = new gearRange(0, 0);
-            trans = new transmition(5, rCnt, gr);
+            trans = new transmition(0, rCnt, gr);
 
             tackGr = tachGraph.CreateGraphics();
             tachGraph.Refresh();
@@ -250,9 +250,10 @@ namespace auto_transmission
                 else
                         if (tachometer != 0)
                     tachometer = 800;
+
+                curGear = get_gear(tachometer, speedometer);
+                speedometer = calc_speed(tachometer);
             }
-            curGear = get_gear(tachometer, speedometer);
-            speedometer = calc_speed(tachometer);
         }
 
         public transmition(int _mode, int _gCnt, gearRange[] _gRange)
@@ -266,12 +267,13 @@ namespace auto_transmission
             gasValue = 0;
             breakValue = 0;
             isRun = false;
-            dct.Add(0, 2.9);
-            dct.Add(1, 1.5);
-            dct.Add(2, 1.0);
-            dct.Add(3, 0.7);
+            dct.Add(0, 0);
+            dct.Add(1, 4.5);
+            dct.Add(2, 3);
+            dct.Add(3, 2.0);
+            dct.Add(4, 1.4);
             //задняя
-            dct.Add(4, 2.7);
+            dct.Add(5, 2.7);
         }
 
         public void startEngine()
@@ -313,20 +315,38 @@ namespace auto_transmission
             		case 0: curGear = 0;
 							break;
                   case 4: //D
+                    if (speedometer < 14)
                      if (breakValue < 20)
 						curGear = 1;						
                      	else
 						curGear = 0;
 
-                     if (curGear==2){
-                     	if ((speed >=50 && speed <=60) && (ob>=2400 && ob<=2600)){
-                        	tachometer=800;
-                            return 3;
-                     	}
-                        else
-                           return 2;
-                     }
-                     break;
+                    if (curGear == 1)
+                    {
+                        if ((speed >= 20) && (ob >= 2400))
+                        {
+                            curGear = 2;
+                            tachometer -= 2000;
+                        }
+                    }
+                    if (curGear == 2)
+                    {
+                        if ((speed >= 40) && (ob >= 2400))
+                        {
+                            curGear = 3;
+                            tachometer -= 1500;
+                        }
+                    }
+                    if (curGear == 3)
+                    {
+                        if ((speed >= 65) && (ob >= 2400))
+                        {
+                            curGear = 4;
+                            tachometer -= 1500;
+                        }
+                    }
+                        break;
+
             }
             return curGear;
         }
@@ -334,6 +354,7 @@ namespace auto_transmission
         public int calc_speed(int oboroti)//обороты передаются в качестве аргумента
         {
             //(на сколько километров смещают колеса за один оборот) * ((обороты двигателя * 60) / (передаточное число общее * передаточное число ступени * 1000)) км/ч
+            if (mode == 0) return 0;
             return (int)(1.5 * ((oboroti * 60) / (3.7 * dct[curGear] * 1000)));
         }
     }
