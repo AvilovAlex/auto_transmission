@@ -168,6 +168,8 @@ namespace auto_transmission
             trans.decrease_tachometr();
             tachDraw();
 			speedDraw();
+            Park.Enabled = Reverse.Enabled = Drive.Enabled = Le1.Enabled = Le2.Enabled = (trans.speedometer == 0);
+            stop_Button.Enabled = Park.Checked;
         }
 
         private void Park_CheckedChanged(object sender, EventArgs e)
@@ -410,7 +412,10 @@ namespace auto_transmission
                 return speedometer - 0.2;
             if ((gasValue < 10) && (breakValue > 10) && (speedometer < 10))
                 return 0;
-            return (int)(1.5 * ((oboroti * 60) / (3.7 * dct[curGear] * 1000)));
+            int speedByTach = (int)(1.5 * ((oboroti * 60) / (3.7 * dct[curGear] * 1000)));
+            if (speedByTach<speedometer)
+                return speedometer - 0.2;
+            return Math.Max(speedByTach, speedometer);
         }
     }
 }
